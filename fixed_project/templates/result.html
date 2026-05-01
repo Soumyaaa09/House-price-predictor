@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Prediction Result — EstateIQ</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+  <div class="bg-scene">
+    <div class="orb orb-1"></div><div class="orb orb-2"></div>
+    <div class="orb orb-3"></div><div class="orb orb-4"></div>
+    <div class="grid-overlay"></div>
+  </div>
+
+  <div class="page-wrapper">
+
+    <header class="site-header">
+      <div class="logo"><i class="fa-solid fa-house-chimney"></i><span>EstateIQ</span></div>
+      <a href="/" class="back-link"><i class="fa-solid fa-arrow-left"></i> New Prediction</a>
+    </header>
+
+    <div class="hero result-hero">
+      <p class="hero-eyebrow animate-in" style="--d:0s"><i class="fa-solid fa-circle-check"></i> Valuation Complete</p>
+      <h1 class="hero-title animate-in" style="--d:.1s">Estimated Market Value</h1>
+    </div>
+
+    <!-- Price Card -->
+    <div class="card price-card animate-in" style="--d:.2s">
+      <div class="price-label">Predicted Price</div>
+      <div class="price-main">₹<span id="priceCounter">0</span></div>
+      <div class="price-subtext">Approx. ₹{{ price_lakhs }} lakh</div>
+      <div class="price-range">
+        <div class="range-item">
+          <span class="range-label"><i class="fa-solid fa-arrow-down-long"></i> Low Estimate</span>
+          <span class="range-val">₹{{ lower }} <small>(~₹{{ lower_lakhs }} lakh)</small></span>
+        </div>
+        <div class="range-divider"></div>
+        <div class="range-item">
+          <span class="range-label"><i class="fa-solid fa-arrow-up-long"></i> High Estimate</span>
+          <span class="range-val">₹{{ upper }} <small>(~₹{{ upper_lakhs }} lakh)</small></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="stats-row animate-in" style="--d:.35s">
+      <div class="stat-card">
+        <i class="fa-solid fa-ruler-combined stat-icon"></i>
+        <div class="stat-info">
+          <span class="stat-val">₹{{ price_per_sqft }}</span>
+          <span class="stat-lbl">Per sq ft</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <i class="fa-solid fa-chart-bar stat-icon"></i>
+        <div class="stat-info">
+          <span class="stat-val">{{ r2 }}%</span>
+          <span class="stat-lbl">Model Accuracy</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <i class="fa-solid fa-bullseye stat-icon"></i>
+        <div class="stat-info">
+          <span class="stat-val">₹{{ mae }}</span>
+          <span class="stat-lbl">Avg. Error (MAE)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Property Details -->
+    <div class="card details-card animate-in" style="--d:.45s">
+      <h3 class="details-title"><i class="fa-solid fa-clipboard-list"></i> Property Summary</h3>
+      <div class="details-grid">
+        <div class="detail-row"><i class="fa-solid fa-ruler-combined"></i><span class="d-label">Living Area</span><span class="d-val">{{ area }} sq ft</span></div>
+        <div class="detail-row"><i class="fa-solid fa-calendar-days"></i><span class="d-label">Property Age</span><span class="d-val">{{ property_age }} years</span></div>
+        <div class="detail-row"><i class="fa-solid fa-bed"></i><span class="d-label">Bedrooms</span><span class="d-val">{{ bedrooms }}</span></div>
+        <div class="detail-row"><i class="fa-solid fa-bath"></i><span class="d-label">Bathrooms</span><span class="d-val">{{ bathrooms }}</span></div>
+        <div class="detail-row"><i class="fa-solid fa-school"></i><span class="d-label">Schools Nearby</span><span class="d-val">{{ schools }}</span></div>
+      </div>
+    </div>
+
+    <div class="actions animate-in" style="--d:.55s">
+      <a href="/" class="predict-btn"><i class="fa-solid fa-rotate-left"></i> Try Another Property</a>
+    </div>
+
+    <p class="disclaimer animate-in" style="--d:.65s">
+      <i class="fa-solid fa-circle-info"></i>
+      Trained on 14,620 real transactions. Actual prices may vary by market conditions.
+    </p>
+
+  </div>
+
+  <script>
+    const target = {{ price_raw }};
+    const el = document.getElementById('priceCounter');
+    const duration = 1800, start = performance.now();
+    function formatNum(n) { return Math.round(n).toLocaleString('en-IN'); }
+    function tick(now) {
+      const progress = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 4);
+      el.textContent = formatNum(eased * target);
+      if (progress < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  </script>
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

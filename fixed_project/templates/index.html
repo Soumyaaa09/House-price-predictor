@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>House Price Predictor — EstateIQ</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+  <div class="bg-scene">
+    <div class="orb orb-1"></div><div class="orb orb-2"></div>
+    <div class="orb orb-3"></div><div class="orb orb-4"></div>
+    <div class="grid-overlay"></div>
+  </div>
+
+  <div class="page-wrapper">
+
+    <header class="site-header">
+      <div class="logo"><i class="fa-solid fa-house-chimney"></i><span>EstateIQ</span></div>
+      <div class="header-badge"><i class="fa-solid fa-brain"></i> ML Powered</div>
+    </header>
+
+    <div class="hero">
+      <p class="hero-eyebrow"><i class="fa-solid fa-sparkles"></i> Real Data · AI Valuation</p>
+      <h1 class="hero-title">What's Your Home<br/><span class="accent">Worth Today?</span></h1>
+      <p class="hero-sub">Trained on 14,620 real transactions. Enter property details for an instant estimate.</p>
+    </div>
+
+    <div class="card form-card">
+      {% if error %}
+      <div class="error-banner"><i class="fa-solid fa-triangle-exclamation"></i> {{ error }}</div>
+      {% endif %}
+
+      <form action="/predict" method="POST" id="predictForm" novalidate>
+
+        <div class="form-grid">
+
+          <!-- Living Area -->
+          <div class="field-group">
+            <label for="area"><i class="fa-solid fa-ruler-combined"></i> Living Area</label>
+            <div class="input-wrap">
+              <input type="number" id="area" name="area" placeholder="e.g. 1800" min="100" max="20000" required/>
+              <span class="unit-badge">sq ft</span>
+            </div>
+          </div>
+
+          <!-- Property Age -->
+          <div class="field-group">
+            <label for="property_age"><i class="fa-solid fa-calendar-days"></i> Property Age</label>
+            <div class="input-wrap">
+              <input type="number" id="property_age" name="property_age" placeholder="e.g. 10" min="0" max="150" value="10"/>
+              <span class="unit-badge">yrs</span>
+            </div>
+          </div>
+
+          <!-- Bedrooms -->
+          <div class="field-group">
+            <label><i class="fa-solid fa-bed"></i> Bedrooms</label>
+            <div class="stepper">
+              <button type="button" class="step-btn" onclick="step('bedrooms',-1)"><i class="fa-solid fa-minus"></i></button>
+              <span class="step-val" id="bedroomsVal">3</span>
+              <input type="hidden" name="bedrooms" id="bedrooms" value="3"/>
+              <button type="button" class="step-btn" onclick="step('bedrooms',1)"><i class="fa-solid fa-plus"></i></button>
+            </div>
+          </div>
+
+          <!-- Bathrooms -->
+          <div class="field-group">
+            <label><i class="fa-solid fa-bath"></i> Bathrooms</label>
+            <div class="stepper">
+              <button type="button" class="step-btn" onclick="step('bathrooms',-1)"><i class="fa-solid fa-minus"></i></button>
+              <span class="step-val" id="bathroomsVal">2</span>
+              <input type="hidden" name="bathrooms" id="bathrooms" value="2"/>
+              <button type="button" class="step-btn" onclick="step('bathrooms',1)"><i class="fa-solid fa-plus"></i></button>
+            </div>
+          </div>
+
+          <!-- Schools Nearby -->
+          <div class="field-group">
+            <label for="schools"><i class="fa-solid fa-school"></i> Schools Nearby</label>
+            <div class="input-wrap select-wrap">
+              <select id="schools" name="schools">
+                <option value="1">1 School</option>
+                <option value="2" selected>2 Schools</option>
+                <option value="3">3 Schools</option>
+              </select>
+              <i class="fa-solid fa-chevron-down select-arrow"></i>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" class="predict-btn" id="submitBtn">
+          <span class="btn-text"><i class="fa-solid fa-wand-magic-sparkles"></i> Predict Price</span>
+          <span class="btn-loader hidden"><i class="fa-solid fa-spinner fa-spin"></i> Analyzing…</span>
+        </button>
+
+      </form>
+    </div>
+
+    <div class="info-pills">
+      <div class="pill"><i class="fa-solid fa-database"></i> 14,620 Real Transactions</div>
+      <div class="pill"><i class="fa-solid fa-chart-line"></i> Random Forest Model</div>
+      <div class="pill"><i class="fa-solid fa-shield-halved"></i> ±8% Confidence Band</div>
+    </div>
+
+  </div>
+
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
